@@ -528,7 +528,9 @@ extension ReaderPagedViewController {
                 )
             }
         } else {
-            // If double page should not be created, use first page
+            // If double page should not be created, restore page views and use single page
+            firstPage.restorePageView()
+            secondPage.restorePageView()
             return forBefore ? secondPage : firstPage
         }
     }
@@ -544,6 +546,10 @@ extension ReaderPagedViewController {
         if let doublePageController = currentViewController as? ReaderDoublePageViewController {
             // Check if either page in the double page is now detected as wide
             if doublePageController.firstPageController.isWideImage || doublePageController.secondPageController.isWideImage {
+                // Restore page views back to their own view hierarchies
+                // before transitioning to single-page display
+                doublePageController.firstPageController.restorePageView()
+                doublePageController.secondPageController.restorePageView()
                 // Reload current page to show single page instead
                 let page = pageIndex(from: currentIndex)
                 move(toPage: page, animated: false)

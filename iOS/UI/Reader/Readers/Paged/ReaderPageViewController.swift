@@ -242,6 +242,22 @@ class ReaderPageViewController: BaseObservingViewController {
         imageAspectRatio = nil
     }
 
+    /// Restore pageView back into this controller's own zoomView hierarchy
+    /// after it was reparented by a ReaderDoublePageViewController.
+    func restorePageView() {
+        guard let pageView, let zoomView else { return }
+        if pageView.superview !== zoomView {
+            pageView.translatesAutoresizingMaskIntoConstraints = false
+            zoomView.addSubview(pageView)
+            zoomView.zoomView = pageView
+            NSLayoutConstraint.activate([
+                pageView.widthAnchor.constraint(equalTo: zoomView.widthAnchor),
+                pageView.heightAnchor.constraint(equalTo: zoomView.heightAnchor)
+            ])
+        }
+        isInDoublePageController = false
+    }
+
     /// Check if this is a wide image (aspect ratio > 1)
     var isWideImage: Bool {
         guard let imageAspectRatio else { return false }
